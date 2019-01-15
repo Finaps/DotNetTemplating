@@ -23,6 +23,7 @@ x64/
 x86/
 build/
 bld/
+data/
 [Bb]in/
 [Oo]bj/
 [Oo]ut/
