@@ -28,7 +28,7 @@ namespace microservice.Controllers
         [HttpGet]
         public ActionResult<string> Get()
         {
-            return "nothing";
+            return "nothing he";
         }
 
         // GET api/values/5

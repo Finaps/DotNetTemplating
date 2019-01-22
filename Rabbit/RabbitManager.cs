@@ -1,12 +1,13 @@
 using System;
 using System.Text;
+using microservice.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace microservice.Rabbit{
-  public class RabbitManager //eh how you doin?
+  public class RabbitManager : IMessageQueue //eh how you doin?
   {
     private readonly RabbitConnection rabbitConnection;
     private readonly IConfiguration configuration;
