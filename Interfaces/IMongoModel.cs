@@ -1,7 +1,7 @@
 using System;
 using MongoDB.Bson;
 
-namespace microservice.Interfaces
+namespace logging.Interfaces
 {
   public interface IMongoModel
   {

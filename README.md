@@ -1,4 +1,4 @@
-Dotnet-microservice-example
+Dotnet-logging-example
 
 This project provided you with an example dotnet configuration for creating a micro service. 
 

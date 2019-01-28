@@ -1,10 +1,10 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "microservice.fullname" . }}
+  name: {{ template "logging.fullname" . }}
   labels:
-    app: {{ template "microservice.name" . }}
-    chart: {{ template "microservice.chart" . }}
+    app: {{ template "logging.name" . }}
+    chart: {{ template "logging.chart" . }}
     draft: {{ default "draft-app" .Values.draft }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -12,12 +12,12 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "microservice.name" . }}
+      app: {{ template "logging.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "microservice.name" . }}
+        app: {{ template "logging.name" . }}
         draft: {{ default "draft-app" .Values.draft }}
         release: {{ .Release.Name }}
       annotations:
@@ -48,7 +48,7 @@ spec:
             - name: {{ $ref }}_{{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ template "microservice.fullname" $root }}-{{ $ref | lower }}
+                  name: {{ template "logging.fullname" $root }}-{{ $ref | lower }}
                   key: {{ $key }}
             {{- end }}
             {{- end }}

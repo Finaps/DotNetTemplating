@@ -12,23 +12,25 @@ using Newtonsoft.Json;
 using logging.Interfaces;
 using System.Text;
 using RabbitMQ.Client;
+using System.IO;
 
 namespace logging.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RabbitController : ControllerBase
+    public class LoggingController : ControllerBase
     {
-        private readonly RabbitManager rabbitManager;
-        public RabbitController(RabbitManager rabbit)
+        private readonly ILogWriter logger;
+        public LoggingController(ILogWriter logger)
         {
-          rabbitManager = rabbit;
+          this.logger = logger;
         }
         // GET api/values
         [HttpGet]
-        public ActionResult<string> Get()
+        public ActionResult Get()
         {
-            return "nothing he";
+            var file = System.IO.File.ReadAllBytes("log.txt");
+            return File(file, "application/force-download", "log.txt");
         }
 
         // GET api/values/5
@@ -42,7 +44,6 @@ namespace logging.Controllers
         [HttpPost]
         public void Post(RabbitMessage value)
         {
-          rabbitManager.Publish(value.Key, value.Message);
         }
     }
 }

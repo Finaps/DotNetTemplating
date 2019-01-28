@@ -1,19 +1,22 @@
 using System;
 using System.Text;
-using microservice.Interfaces;
+using logging.Interfaces;
+using logging.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace microservice.Rabbit{
+namespace logging.Rabbit{
   public class RabbitManager : IMessageQueue //eh how you doin?
   {
     private readonly RabbitConnection rabbitConnection;
     private readonly IConfiguration configuration;
-    public RabbitManager(RabbitConnection connection, IConfiguration config){
+    private readonly ILogWriter logger;
+    public RabbitManager(RabbitConnection connection, IConfiguration config, ILogWriter logger){
       rabbitConnection = connection;
       configuration = config;
+      this.logger = logger;
       Sub();
     }
 
@@ -33,7 +36,7 @@ namespace microservice.Rabbit{
 
     private void Sub(){
       var queue = rabbitConnection.Channel.QueueDeclare().QueueName;
-      rabbitConnection.Channel.QueueBind(queue: queue, exchange:"debtor", routingKey:"cats");
+      rabbitConnection.Channel.QueueBind(queue: queue, exchange:"debtor", routingKey:"*.error");
 
       var consume = new EventingBasicConsumer(rabbitConnection.Channel);
       consume.Received += (model, ea) =>
@@ -41,6 +44,9 @@ namespace microservice.Rabbit{
         var body = ea.Body;
         var message = Encoding.UTF8.GetString(body);
         var routingKey = ea.RoutingKey;
+        var service = routingKey.Split(".")[0];
+        var logmessage = new ErrorMessage(){Message = message, Title = service + " error", Service = service};
+        logger.WriteErrorToLog(logmessage);
         Console.WriteLine(" [x] Received '{0}':'{1}'", routingKey, message);
       };
       rabbitConnection.Channel.BasicConsume(queue: queue, autoAck: true, consumer: consume);

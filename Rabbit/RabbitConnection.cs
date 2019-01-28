@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace microservice.Rabbit{
+namespace logging.Rabbit{
   public class RabbitConnection
   {
     public readonly IConnection connection;

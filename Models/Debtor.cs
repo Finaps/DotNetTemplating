@@ -1,9 +1,9 @@
 using System;
-using microservice.Interfaces;
+using logging.Interfaces;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 
-namespace microservice.Models {
+namespace logging.Models {
   public class Debtor : IMongoModel{
     public ObjectId Id {get;set;}
     

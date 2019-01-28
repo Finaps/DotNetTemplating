@@ -4,20 +4,20 @@ build:
   context: .
   dockerfile: Dockerfile
 install:
-  chart: charts/microservice
+  chart: charts/logging
   values:
   - values.dev.yaml?
   - secrets.dev.yaml?
   set:
     replicaCount: 1
     image:
-      repository: microservice
+      repository: logging
       tag: $(tag)
       pullPolicy: Never
     ingress:
       hosts:
-      # This expands to [space.s.]microservice.<guid>.<region>.aksapp.io
-      - $(spacePrefix)microservice$(hostSuffix)
+      # This expands to [space.s.]logging.<guid>.<region>.aksapp.io
+      - $(spacePrefix)logging$(hostSuffix)
 configurations:
   develop:
     build:

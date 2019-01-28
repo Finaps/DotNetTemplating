@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using microservice.Interfaces;
-using microservice.Models;
+using logging.Interfaces;
+using logging.Models;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace microservice.Mongo {
+namespace logging.Mongo {
   public class MongoDatabase<T> : IDatabase<T> where T : IMongoModel{
     private readonly MongoClient client;
     private readonly IMongoDatabase database;

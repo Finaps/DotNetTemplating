@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using microservice.Interfaces;
-using microservice.Models;
-using microservice.Mongo;
-using microservice.Rabbit;
+using logging.Interfaces;
+using logging.Logger;
+using logging.Models;
+using logging.Mongo;
+using logging.Rabbit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -15,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace microservice
+namespace logging
 {
     public class Startup
     {
@@ -33,12 +34,13 @@ namespace microservice
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<RabbitConnection>();
             services.AddSingleton<RabbitManager>();
-            services.AddSingleton<IDatabase<Debtor>, MongoDatabase<Debtor>>((ctx) =>
-            {
-                MongoConnection connection = ctx.GetRequiredService<MongoConnection>();
-                return new MongoDatabase<Debtor>(connection, "Debtor");
-            });
-            services.AddSingleton<MongoConnection>();
+            services.AddSingleton<ILogWriter, LogWriter>();
+            // services.AddSingleton<IDatabase<Debtor>, MongoDatabase<Debtor>>((ctx) =>
+            // {
+            //     MongoConnection connection = ctx.GetRequiredService<MongoConnection>();
+            //     return new MongoDatabase<Debtor>(connection, "Debtor");
+            // });
+            // services.AddSingleton<MongoConnection>();
         }
 
         // This method gets called by the runtime. Use this met23hod to configure the HTTP request pipeline.
