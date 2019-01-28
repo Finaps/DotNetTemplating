@@ -11,9 +11,11 @@ namespace logging.Rabbit{
     public readonly IModel Channel;
     private readonly IConfigurationSection configuration;
     private readonly IConfigurationSection exchanges;
+    private readonly IConfigurationSection queues;
     public RabbitConnection(IConfiguration config){
       configuration = config.GetSection("Rabbit"); //configured via appsettings.json
       exchanges = config.GetSection("RabbitExchanges");
+      queues = config.GetSection("RabbitQueues");
       connection = Connect();
       Channel = connection.CreateModel();
       SetupExchanges();
@@ -42,25 +44,13 @@ namespace logging.Rabbit{
       }
     }
 
-    private void SetupReceiving(){
-      var channel = connection.CreateModel();
-      
-        channel.QueueDeclare(queue:"hello",
-        durable: false,
-        exclusive: false,
-        autoDelete: false,
-        arguments: null);
-
-        var consumer = new EventingBasicConsumer(channel);
-        consumer.Received += (ob, ea) => {
-           var body = ea.Body;
-          var message = Encoding.UTF8.GetString(body);
-          Console.WriteLine("Reciever: RECEIVED: {0}", message);
-        };
-
-        channel.BasicConsume(queue: "hello", autoAck: true, consumer: consumer);
+    private void SetupQueues(){
+      foreach(var i in queues.GetChildren())
+      {
+        Channel.QueueDeclare(queue: i["Name"]);
+        Channel.QueueBind(queue: i["Name"], exchange: i["Exchange"], routingKey: i["RoutingKey"]);
       }
+    }
     
-
   }
 }

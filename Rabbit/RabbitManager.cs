@@ -35,9 +35,6 @@ namespace logging.Rabbit{
     }
 
     private void Sub(){
-      var queue = rabbitConnection.Channel.QueueDeclare().QueueName;
-      rabbitConnection.Channel.QueueBind(queue: queue, exchange:"debtor", routingKey:"*.error");
-
       var consume = new EventingBasicConsumer(rabbitConnection.Channel);
       consume.Received += (model, ea) =>
       {
@@ -49,7 +46,7 @@ namespace logging.Rabbit{
         logger.WriteErrorToLog(logmessage);
         Console.WriteLine(" [x] Received '{0}':'{1}'", routingKey, message);
       };
-      rabbitConnection.Channel.BasicConsume(queue: queue, autoAck: true, consumer: consume);
+      rabbitConnection.Channel.BasicConsume(queue: "Error", autoAck: true, consumer: consume);
     }
   }
 }

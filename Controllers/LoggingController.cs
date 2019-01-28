@@ -29,7 +29,8 @@ namespace logging.Controllers
         [HttpGet]
         public ActionResult Get()
         {
-            var file = System.IO.File.ReadAllBytes("log.txt");
+            var FileName = String.Format("{0}.txt", DateTime.UtcNow.ToString("ddmmyyyy"));
+            var file = System.IO.File.ReadAllBytes(FileName);
             return File(file, "application/force-download", "log.txt");
         }
 

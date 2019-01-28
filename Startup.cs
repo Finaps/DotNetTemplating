@@ -54,7 +54,7 @@ namespace logging
             {
                 app.UseHsts();
             }
-
+            app.ApplicationServices.GetService<RabbitManager>();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

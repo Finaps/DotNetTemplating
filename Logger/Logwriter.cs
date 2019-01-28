@@ -9,10 +9,8 @@ namespace logging.Logger
   public class LogWriter : ILogWriter
   {
     StringBuilder sb = new StringBuilder();
-    private string FilePath;
   
     public LogWriter(IConfiguration config){
-      FilePath = config.GetSection("Logwriter")["FilePath"];
     }
     public void WriteErrorToLog(ILogMessage message)
     {
@@ -37,7 +35,8 @@ namespace logging.Logger
 
     private void WriteMessageToLog()
     {
-      File.AppendAllText("log.txt", sb.ToString());
+      var FileName = String.Format("{0}.txt", DateTime.UtcNow.ToString("ddmmyyyy"));
+      File.AppendAllText(FileName, sb.ToString());
       sb.Clear();
     }
   }
