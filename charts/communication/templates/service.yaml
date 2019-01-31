@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "logging.fullname" . }}
+  name: {{ template "communication.fullname" . }}
   labels:
-    app: {{ template "logging.name" . }}
-    chart: {{ template "logging.chart" . }}
+    app: {{ template "communication.name" . }}
+    chart: {{ template "communication.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "logging.name" . }}
+    app: {{ template "communication.name" . }}
     release: {{ .Release.Name }}

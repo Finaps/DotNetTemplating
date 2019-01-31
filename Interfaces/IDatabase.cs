@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using System.Linq.Expressions;
 
-namespace logging.Interfaces
+namespace communication.Interfaces
 {
     public interface IDatabase<T>
     {

@@ -4,20 +4,20 @@ build:
   context: .
   dockerfile: Dockerfile
 install:
-  chart: charts/logging
+  chart: charts/communication
   values:
   - values.dev.yaml?
   - secrets.dev.yaml?
   set:
     replicaCount: 1
     image:
-      repository: logging
+      repository: communication
       tag: $(tag)
       pullPolicy: Never
     ingress:
       hosts:
-      # This expands to [space.s.]logging.<guid>.<region>.aksapp.io
-      - $(spacePrefix)logging$(hostSuffix)
+      # This expands to [space.s.]communication.<guid>.<region>.aksapp.io
+      - $(spacePrefix)communication$(hostSuffix)
 configurations:
   develop:
     build:
