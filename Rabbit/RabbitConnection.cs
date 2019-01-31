@@ -4,7 +4,8 @@ using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace logging.Rabbit{
+namespace communication.Rabbit
+{
   public class RabbitConnection
   {
     public readonly IConnection connection;
@@ -12,16 +13,19 @@ namespace logging.Rabbit{
     private readonly IConfigurationSection configuration;
     private readonly IConfigurationSection exchanges;
     private readonly IConfigurationSection queues;
-    public RabbitConnection(IConfiguration config){
+    public RabbitConnection(IConfiguration config)
+    {
       configuration = config.GetSection("Rabbit"); //configured via appsettings.json
       exchanges = config.GetSection("RabbitExchanges");
       queues = config.GetSection("RabbitQueues");
       connection = Connect();
       Channel = connection.CreateModel();
       SetupExchanges();
+      SetupQueues();
     }
 
-    private IConnection Connect(){
+    private IConnection Connect()
+    {
       var factory = new ConnectionFactory()
       {
         UserName = configuration["UserName"],
@@ -29,11 +33,13 @@ namespace logging.Rabbit{
         VirtualHost = configuration["VirtualHost"],
         HostName = configuration["HostName"],
       };
-       return factory.CreateConnection();
+      return factory.CreateConnection();
     }
 
-    private void SetupExchanges(){
-      foreach(var i in exchanges.GetChildren()){
+    private void SetupExchanges()
+    {
+      foreach (var i in exchanges.GetChildren())
+      {
         Channel.ExchangeDeclare(
           exchange: i["Exchange"],
           type: i["Type"],
@@ -44,13 +50,14 @@ namespace logging.Rabbit{
       }
     }
 
-    private void SetupQueues(){
-      foreach(var i in queues.GetChildren())
+    private void SetupQueues()
+    {
+      foreach (var i in queues.GetChildren())
       {
         Channel.QueueDeclare(queue: i["Name"]);
         Channel.QueueBind(queue: i["Name"], exchange: i["Exchange"], routingKey: i["RoutingKey"]);
       }
     }
-    
+
   }
 }

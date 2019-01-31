@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using logging.Rabbit;
-using logging.Mongo;
-using logging.Models;
+using communication.Rabbit;
+using communication.Mongo;
+using communication.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using logging.Interfaces;
+using communication.Interfaces;
 using System.Text;
 using RabbitMQ.Client;
 
-namespace logging.Controllers
+namespace communication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

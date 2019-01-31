@@ -1,7 +1,7 @@
 using System;
 using MongoDB.Bson;
 
-namespace logging.Interfaces
+namespace communication.Interfaces
 {
   public interface IMongoModel
   {

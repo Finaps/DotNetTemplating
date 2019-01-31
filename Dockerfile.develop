@@ -5,8 +5,8 @@ ENV DOTNET_USE_POLLING_FILE_WATCHER=true
 EXPOSE 80
 
 WORKDIR /src
-COPY ["logging.csproj", "./"]
-RUN dotnet restore "logging.csproj"
+COPY ["communication.csproj", "./"]
+RUN dotnet restore "communication.csproj"
 COPY . .
 RUN dotnet build --no-restore -c $BUILD_CONFIGURATION
 

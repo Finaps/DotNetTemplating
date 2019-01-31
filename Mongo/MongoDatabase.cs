@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using logging.Interfaces;
-using logging.Models;
+using communication.Interfaces;
+using communication.Models;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace logging.Mongo {
+namespace communication.Mongo {
   public class MongoDatabase<T> : IDatabase<T> where T : IMongoModel{
     private readonly MongoClient client;
     private readonly IMongoDatabase database;

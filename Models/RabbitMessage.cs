@@ -1,9 +1,9 @@
 using System;
-using logging.Interfaces;
+using communication.Interfaces;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 
-namespace logging.Models {
+namespace communication.Models {
   public class RabbitMessage{
     
     [JsonProperty("message")]
