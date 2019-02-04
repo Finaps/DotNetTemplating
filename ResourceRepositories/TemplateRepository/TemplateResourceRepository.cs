@@ -55,12 +55,13 @@ namespace communication.ResourceRepositories.TemplateRepository
 
     private void TemplateSubscriber(Object sender, BasicDeliverEventArgs ea)
     {
-      var operation = ea.RoutingKey.Split(".")["1"].ToLower();
+      var operation = ea.RoutingKey.Split(".")[1].ToLower();
       switch (operation)
       {
         case "create":
           var template = ea.ParseBodyToObject<Template>();
           database.InsertItem(template);
+          break;
         default:
           return;
       }

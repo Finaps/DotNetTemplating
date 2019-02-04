@@ -1,10 +1,11 @@
-using system;
+using System.Threading.Tasks;
+using System;
 
 namespace communication.Interfaces
 {
   public interface IResourceRepository<T>
   {
-    T FindOrGet(string id);
+    ValueTask<T> FindOrGet(string id);
     void ClearStore();
 
   }
