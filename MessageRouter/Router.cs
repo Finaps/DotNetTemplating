@@ -5,6 +5,9 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using FormatWith;
 using communication.Models;
+using communication.ExtensionMethods;
+using communication.ResourceRepositories.TemplateRepository;
+using System.Threading.Tasks;
 
 namespace communication.MessageRouter
 {
@@ -12,39 +15,50 @@ namespace communication.MessageRouter
   {
     private readonly RabbitManager rabbitManager;
     private readonly IConfiguration configuration;
-    public Router(RabbitManager rabbit, IConfiguration config)
+    private readonly TemplateResourceRepository templateRepository;
+    public Router(RabbitManager rabbit, IConfiguration config, TemplateResourceRepository template)
     {
       rabbitManager = rabbit;
       configuration = config;
+      templateRepository = template;
 
       rabbitManager.Subscribe(ReceivedHandler, "Communication");
     }
 
+    ///Rabbit Subscribe function.
     void ReceivedHandler(object sender, BasicDeliverEventArgs ea)
     {
-      var method = ea.RoutingKey.Split(".")[2].ToLower();
-      switch (method)
+      var body = ea.ParseBodyToObject<CommunicationRecord>();
+      RouteMessage(body);
+    }
+    ///Main Router
+    public void RouteMessage(CommunicationRecord record)
+    {
+      switch (record.Method)
       {
         case "email":
-          ManageEmails(ea);
+          ManageEmails(record);
           break;
         case "sms":
-          ManageSMS(ea);
+          ManageSMS(record);
           break;
         default:
           return;
       }
     }
-    void ManageEmails(BasicDeliverEventArgs ea)
+
+
+    async void ManageEmails(CommunicationRecord record)
     {
-      string template = configuration.GetSection("TestTemplate").GetSection("Template").Value;
-      string formated = template.FormatWith(new { name = "me", content = "jejeje" });
-      var mail = new EmailRequest() { Recipient = "me@me.com", Content = formated };
+      var temp = await templateRepository.FindOrGet(record.TemplateId);
+      string formated = temp.Content.FormatWith(record.Parameters);
+      var mail = new EmailRequest() { Recipient = record.EmailAddress, Content = formated };
       rabbitManager.Publish<EmailRequest>("communication.send.email", mail);
     }
 
-    void ManageSMS(BasicDeliverEventArgs ea)
+    void ManageSMS(CommunicationRecord record)
     {
+
     }
 
   }
