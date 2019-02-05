@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Finaps",
+  "identity": "Finaps.MicroServicesTemplate.CSharp",
+  "name": "Finaps Microservice Framework",
+  "shortName": "finapsms",
+  "sourceName": "MicroService",
+  "symbols": {
+    "EnableMongo": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true"
+    },
+    "EnableHttpClient": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true"
+    }
+  },
+  "sources": [{
+    "modifiers": [{
+        "condition": "(!EnableMongo)",
+        "exclude": ["Mongo"]
+      },
+      {
+        "condition": "(!EnableHttpClient)",
+        "exclude": ["WebService"]
+      }
+    ]
+  }]
+}
