@@ -5,26 +5,38 @@
   "name": "Finaps Microservice Framework",
   "shortName": "finapsms",
   "sourceName": "MicroService",
+  "preferNameDirectory": "true",
   "symbols": {
-    "EnableMongo": {
+    "Mongo": {
       "type": "parameter",
       "dataType": "bool",
-      "defaultValue": "true"
+      "defaultValue": "false"
     },
-    "EnableHttpClient": {
+    "Http": {
       "type": "parameter",
       "dataType": "bool",
-      "defaultValue": "true"
+      "defaultValue": "false"
     }
   },
   "sources": [{
     "modifiers": [{
-        "condition": "(!EnableMongo)",
+        "condition": "(!Mongo)",
         "exclude": ["Mongo"]
       },
       {
-        "condition": "(!EnableHttpClient)",
+        "condition": "(!Http)",
         "exclude": ["WebService"]
+      },
+      {
+        "exclude": [
+          "**/[Bb]in/**",
+          "**/[Oo]bj/**",
+          ".template.config/**/*",
+          "**/*.filelist",
+          "**/*.user",
+          "**/*.lock.json",
+          ".git/**"
+        ]
       }
     ]
   }]
