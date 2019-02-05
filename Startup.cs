@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MicroService.Interfaces;
-using MicroService.MessageRouter;
 using MicroService.Models;
 using MicroService.Mongo;
 using MicroService.Rabbit;
@@ -54,7 +53,6 @@ namespace MicroService
         app.UseHsts();
       }
       app.ApplicationServices.GetService<RabbitManager>();
-      app.ApplicationServices.GetServices<Router>();
       app.UseHttpsRedirection();
       app.UseMvc();
     }

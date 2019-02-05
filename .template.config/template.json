@@ -21,7 +21,10 @@
   "sources": [{
     "modifiers": [{
         "condition": "(!Mongo)",
-        "exclude": ["Mongo"]
+        "exclude": [
+          "Mongo",
+          "Interfaces/IMongoModel.cs"
+        ]
       },
       {
         "condition": "(!Http)",
