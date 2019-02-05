@@ -3,7 +3,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client.Events;
 
-namespace communication.ExtensionMethods
+namespace MicroService.ExtensionMethods
 {
   public static class RabbitExtentions
   {

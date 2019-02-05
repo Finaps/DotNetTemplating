@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace communication.Interfaces
+namespace MicroService.Interfaces
 {
   public interface IRestClient
   {

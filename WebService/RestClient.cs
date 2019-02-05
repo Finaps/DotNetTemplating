@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
-using communication.Interfaces;
+using MicroService.Interfaces;
 
-namespace communication.WebService
+namespace MicroService.WebService
 {
   public class RestClient : BaseWebService, IRestClient
   {

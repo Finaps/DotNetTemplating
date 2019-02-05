@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace communication.WebService
+namespace MicroService.WebService
 {
   /// <summary>
   /// The basic implementation of all Web Services which can be used as an abstraction (See RESTService)

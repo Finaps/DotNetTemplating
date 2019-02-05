@@ -1,9 +1,9 @@
 using System;
-using communication.Interfaces;
+using MicroService.Interfaces;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 
-namespace communication.Models {
+namespace MicroService.Models {
   public class RabbitMessage{
     
     [JsonProperty("message")]

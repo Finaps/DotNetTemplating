@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System;
 
-namespace communication.Interfaces
+namespace MicroService.Interfaces
 {
   public interface IResourceRepository<T>
   {

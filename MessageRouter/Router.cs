@@ -1,15 +1,15 @@
 using System;
-using communication.Rabbit;
+using MicroService.Rabbit;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using FormatWith;
-using communication.Models;
-using communication.ExtensionMethods;
-using communication.ResourceRepositories.TemplateRepository;
+using MicroService.Models;
+using MicroService.ExtensionMethods;
+using MicroService.ResourceRepositories.TemplateRepository;
 using System.Threading.Tasks;
 
-namespace communication.MessageRouter
+namespace MicroService.MessageRouter
 {
   public class Router
   {
@@ -22,17 +22,17 @@ namespace communication.MessageRouter
       configuration = config;
       templateRepository = template;
 
-      rabbitManager.Subscribe(ReceivedHandler, "Communication");
+      rabbitManager.Subscribe(ReceivedHandler, "MicroService");
     }
 
     ///Rabbit Subscribe function.
     void ReceivedHandler(object sender, BasicDeliverEventArgs ea)
     {
-      var body = ea.ParseBodyToObject<CommunicationRecord>();
+      var body = ea.ParseBodyToObject<MicroServiceRecord>();
       RouteMessage(body);
     }
     ///Main Router
-    public void RouteMessage(CommunicationRecord record)
+    public void RouteMessage(MicroServiceRecord record)
     {
       switch (record.Method)
       {
@@ -48,15 +48,15 @@ namespace communication.MessageRouter
     }
 
 
-    async void ManageEmails(CommunicationRecord record)
+    async void ManageEmails(MicroServiceRecord record)
     {
       var temp = await templateRepository.FindOrGet(record.TemplateId);
       string formated = temp.Content.FormatWith(record.Parameters);
       var mail = new EmailRequest() { Recipient = record.EmailAddress, Content = formated };
-      rabbitManager.Publish<EmailRequest>("communication.send.email", mail);
+      rabbitManager.Publish<EmailRequest>("MicroService.send.email", mail);
     }
 
-    void ManageSMS(CommunicationRecord record)
+    void ManageSMS(MicroServiceRecord record)
     {
 
     }

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using communication.Interfaces;
-using communication.MessageRouter;
-using communication.Models;
-using communication.Mongo;
-using communication.Rabbit;
+using MicroService.Interfaces;
+using MicroService.MessageRouter;
+using MicroService.Models;
+using MicroService.Mongo;
+using MicroService.Rabbit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace communication
+namespace MicroService
 {
   public class Startup
   {
@@ -34,7 +34,6 @@ namespace communication
       services.AddSingleton<IConfiguration>(Configuration);
       services.AddSingleton<RabbitConnection>();
       services.AddSingleton<RabbitManager>();
-      services.AddSingleton<Router>();
       // services.AddSingleton<IDatabase<Debtor>, MongoDatabase<Debtor>>((ctx) =>
       // {
       //     MongoConnection connection = ctx.GetRequiredService<MongoConnection>();
