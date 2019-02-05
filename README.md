@@ -1,5 +1,12 @@
-Dotnet-MicroService-example
+DOTNET Microservices template,
 
-This project provided you with an example dotnet configuration for creating a micro service. 
+Install:  dotnet new -i .
 
+Usage: dotnet new finapsms -n <name> 
+
+Options:
+
+-M add mongo
+
+-H add HTTP
 
