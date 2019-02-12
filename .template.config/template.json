@@ -22,13 +22,12 @@
     "modifiers": [{
         "condition": "(!Mongo)",
         "exclude": [
-          "Mongo",
-          "Interfaces/IMongoModel.cs"
+          "Common/Mongo"
         ]
       },
       {
         "condition": "(!Http)",
-        "exclude": ["WebService"]
+        "exclude": ["Common/HTTP"]
       },
       {
         "exclude": [
