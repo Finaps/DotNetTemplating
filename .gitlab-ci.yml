@@ -1,0 +1,37 @@
+image: docker:stable
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  REGISTRY_URL: registry.finaps.nl
+  DOCKER_IMAGE: ${REGISTRY_URL}/${CI_PROJECT_PATH}
+
+before_script:
+  - docker login -u ${GITLAB_REGISTRY_USER} -p ${GITLAB_REGISTRY_PASS} ${REGISTRY_URL}
+
+stages:
+  - test
+  - release
+test:
+  stage: test
+  script:
+    - docker build -f Dockerfile.test .
+release_edge:
+  stage: release
+  script:
+    - docker build --tag release .
+    - docker tag release ${DOCKER_IMAGE}:edge
+    - docker push ${DOCKER_IMAGE}:edge
+  only:
+    - develop
+
+release_latest:
+  stage: release
+  script:
+    - docker build --tag release -f docker/Dockerfile .
+    - docker tag release ${DOCKER_IMAGE}:latest
+    - docker push ${DOCKER_IMAGE}:latest
+  only:
+    - master
