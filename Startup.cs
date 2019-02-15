@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HealthChecks.UI.Client;
 using MicroService.Common.Mongo;
 using MicroService.Common.Rabbit;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -31,6 +34,7 @@ namespace MicroService
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddMongoDBConnection();
             services.AddRabbitMQ();
+            services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
             // services.AddSingleton<IDatabase<Debtor>, MongoDatabase<Debtor>>((ctx) =>
             // {
             //     MongoConnection connection = ctx.GetRequiredService<MongoConnection>();
@@ -51,7 +55,18 @@ namespace MicroService
                 app.UseHsts();
             }
             app.ApplicationServices.GetService<RabbitManager>();
-            app.UseHttpsRedirection();
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
+
+            app.UseHealthChecks("/liveness", new HealthCheckOptions
+            {
+                Predicate = r => r.Name.Contains("self")
+            });
+
+
             app.UseMvc();
         }
     }
