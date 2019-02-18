@@ -1,0 +1,54 @@
+image: docker:stable
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  REGISTRY_URL: registry.finaps.nl
+  DOCKER_IMAGE: ${REGISTRY_URL}/${CI_PROJECT_PATH}
+  CHART_PATH: <path>/to/charts
+
+before_script:
+  - docker login -u ${GITLAB_REGISTRY_USER} -p ${GITLAB_REGISTRY_PASS} ${REGISTRY_URL}
+
+stages:
+  - release
+  - deploy
+
+release_staging:
+  stage: release
+  script:
+    - docker build --tag release .
+    - docker tag release ${DOCKER_IMAGE}:latest
+    - docker push ${DOCKER_IMAGE}:latest
+  only:
+    - develop
+
+release_latest:
+  stage: release
+  script:
+    - docker build --tag release .
+    - docker tag release ${DOCKER_IMAGE}:stable
+    - docker push ${DOCKER_IMAGE}:stable
+  only:
+    - master
+
+deploy_staging:
+  stage: deploy
+  image: lwolf/helm-kubectl-docker:latest
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config use-context debtco-staging
+    - helm init --client-only
+    - helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+    - helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
+    - helm repo update
+  script:
+    - export API_VERSION="$(grep "appVersion" ${CHART_PATH}Chart.yaml | cut -d" " -f2)"
+    - export RELEASE_NAME="$(grep "fullnameOverride" ${CHART_PATH}values.yaml | cut -d" " -f2)"
+    - export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
+    - if [ ${DEPLOYS}  -eq 0 ]; then helm install --name=${RELEASE_NAME} ${CHART_PATH} ; else helm upgrade ${RELEASE_NAME} ${CHART_PATH} --force --recreate-pods; fi
+  only:
+    - develop

@@ -1,12 +1,29 @@
-DOTNET Microservices template,
+# Finaps DOTNET Microservice Template
 
-Install:  dotnet new -i .
+## Requirements:
 
-Usage: dotnet new finapsms -n <name> 
+`dotnet cli`
+
+### Installation of Template
+
+To install the template localy:
+
+```sh
+$ cd <path/to/folder>
+$ dotnet new -i .
+```
+
+### Usage
+
+```sh
+$ dotnet new finapsms -n <ProjectName> [OPTIONS]
+```
+
+If `<projectName>` is left empty it will take the folder name.
 
 Options:
 
--M add mongo
-
--H add HTTP
-
+```
+-M  add mongo
+-H  add HTTP
+```
