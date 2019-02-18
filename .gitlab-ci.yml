@@ -13,14 +13,8 @@ before_script:
   - docker login -u ${GITLAB_REGISTRY_USER} -p ${GITLAB_REGISTRY_PASS} ${REGISTRY_URL}
 
 stages:
-  - test
   - release
   - deploy
-
-test:
-  stage: test
-  script:
-    - docker build -f Dockerfile.test .
 
 release_staging:
   stage: release
@@ -34,7 +28,7 @@ release_staging:
 release_latest:
   stage: release
   script:
-    - docker build --tag release -f docker/Dockerfile .
+    - docker build --tag release .
     - docker tag release ${DOCKER_IMAGE}:stable
     - docker push ${DOCKER_IMAGE}:stable
   only:
