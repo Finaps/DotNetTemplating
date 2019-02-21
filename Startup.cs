@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HealthChecks.UI.Client;
+#if (Mongo)
 using MicroService.Common.Mongo;
+#endif
 using MicroService.Common.Rabbit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -32,7 +34,6 @@ namespace MicroService
     {
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
       services.AddSingleton<IConfiguration>(Configuration);
-      services.AddMongoDBConnection();
       services.AddRabbitMQ();
       services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
       // services.AddSingleton<IDatabase<Debtor>, MongoDatabase<Debtor>>((ctx) =>
@@ -43,6 +44,11 @@ namespace MicroService
       // services.AddSingleton<MongoConnection>();
 
       services.Configure<RabbitOptions>(Configuration.GetSection("Rabbit"));
+
+#if (Mongo)
+      services.Configure<MongoOptions>(Configuration.GetSection("Mongo"));
+      services.AddMongoDBConnection();
+#endif
     }
 
     // This method gets called by the runtime. Use this met23hod to configure the HTTP request pipeline.
