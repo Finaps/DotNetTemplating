@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -11,13 +12,14 @@ namespace MicroService.Common.Rabbit
   {
     public readonly IConnection connection;
     public readonly IModel Channel;
-
+    private readonly ILogger<RabbitConnection> logger;
     private readonly RabbitOptions rabbitOptions;
-    public RabbitConnection(IConfiguration config, IOptionsMonitor<RabbitOptions> options)
+    public RabbitConnection(IConfiguration config, IOptionsMonitor<RabbitOptions> options, ILogger<RabbitConnection> logger)
     {
       rabbitOptions = options.CurrentValue;
       connection = Connect();
       Channel = connection.CreateModel();
+      this.logger = logger;
       SetupExchanges();
       SetupQueues();
     }
@@ -45,6 +47,7 @@ namespace MicroService.Common.Rabbit
           autoDelete: i.AutoDelete,
           arguments: null
         );
+        logger.LogInformation($"Setup exchange {i.Exchange}");
       }
     }
 
@@ -64,6 +67,8 @@ namespace MicroService.Common.Rabbit
           exchange: i.Exchange,
           routingKey: i.RoutingKey
         );
+
+        logger.LogInformation($"Setup Queue {i.Name}, bound to {i.RoutingKey}");
       }
     }
   }
