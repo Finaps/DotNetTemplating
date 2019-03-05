@@ -3,10 +3,10 @@ using System;
 
 namespace MicroService.Common.Common
 {
-    public interface IResourceRepository<T>
-    {
-        ValueTask<T> FindOrGet(string id);
-        void ClearStore();
+  public interface IResourceRepository<T>
+  {
+    ValueTask<T> FindOrGet(string id);
+    void ClearStore();
 
-    }
+  }
 }

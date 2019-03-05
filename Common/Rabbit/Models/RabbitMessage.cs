@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 
 namespace MicroService.Common.Rabbit
 {
-    public class RabbitMessage
-    {
+  public class RabbitMessage
+  {
 
-        [JsonProperty("message")]
-        public string Message { get; set; }
-        public string Key { get; set; }
-    }
+    [JsonProperty("message")]
+    public string Message { get; set; }
+    public string Key { get; set; }
+  }
 }

@@ -1,7 +1,9 @@
+using System.ComponentModel.Design;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
+using System.Threading.Tasks;
 using MicroService.Common.Common;
 using MicroService.Common.Mongo;
 using Microsoft.Extensions.Configuration;
@@ -61,27 +63,27 @@ namespace MicroService.Common.Mongo
     {
       return collection.FindSync(predicate, cancellationToken: cancellationToken).FirstOrDefault();
     }
-
-    public List<T> RetrieveItems(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default(CancellationToken))
+    //important to cast to list to avoid cursor issues whilst quering db.
+    public IList<T> RetrieveItems(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default(CancellationToken))
     {
       return collection.FindSync(predicate, cancellationToken: cancellationToken).ToList();
     }
 
-    public List<T> RetrieveItems()
+    public IList<T> RetrieveItems()
     {
       return collection.AsQueryable().ToList();
     }
 
-    public List<T> RetrieveItems(Expression<Func<T, bool>> predicate, int limit, int offset, CancellationToken cancellationToken = default(CancellationToken))
+    public IList<T> RetrieveItems(Expression<Func<T, bool>> predicate, int limit, int offset, CancellationToken cancellationToken = default(CancellationToken))
     {
       var options = CreateOptions(limit, offset);
       return collection.FindSync(predicate, options, cancellationToken).ToList();
     }
 
-    public List<T> RetrieveItems(int limit, int offset)
+    public IList<T> RetrieveItems(int limit, int offset)
     {
       var options = CreateOptions(limit, offset);
-      return collection.AsQueryable().Take(limit).Skip(offset).ToList();
+      return collection.FindSync(new BsonDocument(), options).ToList();
     }
 
     public T UpdateItem(T obj, string id, CancellationToken cancellationToken = default(CancellationToken))
@@ -94,8 +96,8 @@ namespace MicroService.Common.Mongo
     {
       if (obj.Id == default(Guid))
         return default(T);
-
-      return collection.FindOneAndReplace(GetId(obj.Id), obj, cancellationToken: cancellationToken);
+      var options = new FindOneAndReplaceOptions<T> { ReturnDocument = ReturnDocument.After };
+      return collection.FindOneAndReplace(GetId(obj.Id), obj, options, cancellationToken);
     }
 
     public long Count(CancellationToken cancellationToken = default(CancellationToken))
@@ -114,6 +116,93 @@ namespace MicroService.Common.Mongo
       return collection.CountDocuments(options, cancellationToken: cancellationToken);
     }
 
+    public async Task<T> InsertItemAsync(T obj, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      var insertOptions = new InsertOneOptions();
+      await collection.InsertOneAsync(obj, insertOptions, cancellationToken);
+      return obj;
+    }
+
+    public Task<T> RetrieveItemAsync(string id, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      return collection.FindAsync(GetId(id), cancellationToken: cancellationToken).Result.FirstAsync(cancellationToken);
+    }
+
+    public Task<T> RetrieveItemAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      return collection.FindAsync(GetId(id), cancellationToken: cancellationToken).Result.FirstAsync(cancellationToken);
+    }
+
+    public Task<List<T>> RetrieveItemsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      return collection.FindAsync(predicate, cancellationToken: cancellationToken).Result.ToListAsync(cancellationToken);
+    }
+
+    public Task<List<T>> RetrieveItemsAsync(Expression<Func<T, bool>> predicate, int limit, int offset, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      return collection.FindAsync(predicate, CreateOptions(limit, offset), cancellationToken).Result.ToListAsync(cancellationToken);
+    }
+
+    public Task<List<T>> RetrieveItemsAsync(CancellationToken cancellationToken = default(CancellationToken))
+    {
+      return collection.AsQueryable().ToListAsync();
+    }
+
+    public Task<List<T>> RetrieveItemsAsync(int limit, int offset, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      return collection.FindAsync(new BsonDocument(), CreateOptions(limit, offset), cancellationToken).Result.ToListAsync();
+    }
+
+    public Task<T> UpdateItemAsync(T obj, string id, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      obj.Id = new Guid(id);
+      return UpdateItemAsync(obj, cancellationToken);
+    }
+    public Task<T> UpdateItemAsync(T obj, Guid id, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      obj.Id = id;
+      return UpdateItemAsync(obj, cancellationToken);
+    }
+
+    public Task<T> UpdateItemAsync(T obj, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      if (obj.Id == default(Guid))
+        return Task.FromResult(default(T));
+      var options = new FindOneAndReplaceOptions<T> { ReturnDocument = ReturnDocument.After };
+      return collection.FindOneAndReplaceAsync(GetId(obj.Id), obj, options, cancellationToken);
+    }
+
+    public Task<long> CountAsync(CancellationToken cancellationToken = default(CancellationToken))
+    {
+      return CountAsync(new BsonDocument(), cancellationToken);
+    }
+
+    public Task<long> CountAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      var options = Builders<T>.Filter.Where(predicate);
+      return CountAsync(options, cancellationToken);
+    }
+
+    public Task<long> CountAsync(FilterDefinition<T> options, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      return collection.CountDocumentsAsync(options, cancellationToken: cancellationToken);
+    }
+
+    public async Task RemoveItemAsync(T obj, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      await RemoveItemAsync(obj.Id);
+    }
+
+    public async Task RemoveItemAsync(string id, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      var idToRemove = new Guid(id);
+      await RemoveItemAsync(idToRemove, cancellationToken: cancellationToken);
+    }
+
+    public async Task RemoveItemAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken))
+    {
+      await collection.DeleteOneAsync(GetId(id), cancellationToken: cancellationToken);
+    }
     private FindOptions<T> CreateOptions(int limit, int offset)
     {
       return new FindOptions<T>
@@ -132,5 +221,8 @@ namespace MicroService.Common.Mongo
     {
       return Builders<T>.Filter.Eq(x => x.Id, id);
     }
+
+    public IEnumerable<T> AsQueryable() => collection.AsQueryable();
+
   }
 }

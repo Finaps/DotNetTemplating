@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -12,12 +11,11 @@ namespace MicroService.Common.Rabbit
   {
     private readonly RabbitConnection rabbitConnection;
     private readonly IConfiguration configuration;
-    private readonly ILogger<RabbitManager> logger;
-    public RabbitManager(RabbitConnection connection, IConfiguration config, ILogger<RabbitManager> logger)
+    public RabbitManager(RabbitConnection connection, IConfiguration config)
     {
       rabbitConnection = connection;
       configuration = config;
-      this.logger = logger;
+      //Sub();
     }
 
     public void Publish<T>(string key, T body)
@@ -33,7 +31,7 @@ namespace MicroService.Common.Rabbit
         routingKey: key,
         body: message);
 
-      logger.LogInformation("Published message : {0} , to key: {1}", body, key);
+      Console.WriteLine("Published message : {0} , to key: {1}", body, key);
     }
 
     public void Subscribe(EventHandler<BasicDeliverEventArgs> receivedEvent, string queue)
@@ -41,6 +39,19 @@ namespace MicroService.Common.Rabbit
       var consume = new EventingBasicConsumer(rabbitConnection.Channel);
       consume.Received += receivedEvent;
       rabbitConnection.Channel.BasicConsume(queue: queue, autoAck: true, consumer: consume);
+    }
+    private void Sub()
+    {
+      var consume = new EventingBasicConsumer(rabbitConnection.Channel);
+      consume.Received += (model, ea) =>
+      {
+        var body = ea.Body;
+        var message = Encoding.UTF8.GetString(body);
+        var routingKey = ea.RoutingKey;
+        var service = routingKey.Split(".")[0];
+        Console.WriteLine(" [x] Received '{0}':'{1}'", routingKey, message);
+      };
+      rabbitConnection.Channel.BasicConsume(queue: "Error", autoAck: true, consumer: consume);
     }
   }
 }

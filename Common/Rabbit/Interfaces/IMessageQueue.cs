@@ -5,10 +5,10 @@ using System.Linq.Expressions;
 
 namespace MicroService.Common.Rabbit
 {
-    public interface IMessageQueue
-    {
-        void Publish<T>(string key, T message);
+  public interface IMessageQueue
+  {
+    void Publish<T>(string key, T message);
 
-        void Publish(string key, string message);
-    }
+    void Publish(string key, string message);
+  }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace MicroService.Common.Rabbit
 {
@@ -9,7 +10,7 @@ namespace MicroService.Common.Rabbit
     public string VirtualHost { get; set; }
     public string HostName { get; set; }
     public ExchangeOptions[] Exchanges { get; set; }
-    public QueueOptions[] Queues { get; set; }
+    public QueueOptions[] Queues { get; set; } = new List<QueueOptions>().ToArray();
   }
 
   public class ExchangeOptions

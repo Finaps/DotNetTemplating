@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HealthChecks.UI.Client;
-#if (Mongo)
 using MicroService.Common.Mongo;
-#endif
 using MicroService.Common.Rabbit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -17,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MicroService.Common.Common;
 
 namespace MicroService
 {
@@ -32,26 +31,13 @@ namespace MicroService
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
       services.AddSingleton<IConfiguration>(Configuration);
-      services.AddRabbitMQ();
+      services.AddRabbitMQ(Configuration);
+      services.ConfigureDatabase(Configuration);
+      services.ConfigureResolvers(Configuration);
       services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
-      // services.AddSingleton<IDatabase<Debtor>, MongoDatabase<Debtor>>((ctx) =>
-      // {
-      //     MongoConnection connection = ctx.GetRequiredService<MongoConnection>();
-      //     return new MongoDatabase<Debtor>(connection, "Debtor");
-      // });
-      // services.AddSingleton<MongoConnection>();
-
-      services.Configure<RabbitOptions>(Configuration.GetSection("Rabbit"));
-
-#if (Mongo)
-      services.Configure<MongoOptions>(Configuration.GetSection("Mongo"));
-      services.AddMongoDBConnection();
-#endif
     }
-
-    // This method gets called by the runtime. Use this met23hod to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
       if (env.IsDevelopment())
@@ -73,9 +59,30 @@ namespace MicroService
       {
         Predicate = r => r.Name.Contains("self")
       });
-
-
       app.UseMvc();
+    }
+  }
+  public static class CustomExtensionMethods
+  {
+    public static IServiceCollection ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
+      services.AddSingleton<MongoConnection>();
+      services.Configure<MongoOptions>(configuration.GetSection("Mongo"));
+
+
+      return services;
+    }
+    public static IServiceCollection ConfigureResolvers(this IServiceCollection services, IConfiguration configuration)
+    {
+      return services;
+    }
+    private static IServiceCollection ConfigureMongo<T>(this IServiceCollection services) where T : IMongoModel
+    {
+      return services.AddSingleton<IDatabase<T>, MongoDatabase<T>>((ctx) =>
+      {
+        MongoConnection connection = ctx.GetRequiredService<MongoConnection>();
+        return new MongoDatabase<T>(connection, typeof(T).Name);
+      });
     }
   }
 }
