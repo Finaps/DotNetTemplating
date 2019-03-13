@@ -32,6 +32,7 @@ namespace MicroService
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+      services.Configure<RabbitOptions>(Configuration.GetSection("Rabbit"));
       services.AddSingleton<IConfiguration>(Configuration);
       services.AddRabbitMQ(Configuration);
       services.ConfigureDatabase(Configuration);

@@ -16,6 +16,11 @@
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false"
+    },
+    "Update": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "false"
     }
   },
   "sources": [{
@@ -28,6 +33,16 @@
       {
         "condition": "(!Http)",
         "exclude": ["Common/HTTP"]
+      },
+      {
+        "condition": "(Update)",
+        "exclude": [
+          "Startup.cs",
+          "appsettings.json",
+          "appsettings.Development.json",
+          "README.md",
+          "Controllers/HomeController.cs"
+        ]
       },
       {
         "exclude": [

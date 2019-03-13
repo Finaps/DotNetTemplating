@@ -7,7 +7,7 @@ variables:
   DOCKER_DRIVER: overlay2
   REGISTRY_URL: registry.finaps.nl
   DOCKER_IMAGE: ${REGISTRY_URL}/${CI_PROJECT_PATH}
-  CHART_PATH: <path>/to/charts
+  CHART_PATH: charts/MicroService/
 
 before_script:
   - docker login -u ${GITLAB_REGISTRY_USER} -p ${GITLAB_REGISTRY_PASS} ${REGISTRY_URL}

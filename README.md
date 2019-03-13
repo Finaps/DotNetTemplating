@@ -17,6 +17,8 @@ $ dotnet new -i .
 
 ```sh
 $ dotnet new finapsms -n <ProjectName> [OPTIONS]
+
+$ dotnet new finapsms -U --force          (Performs and update)
 ```
 
 If `<projectName>` is left empty it will take the folder name.
@@ -26,6 +28,7 @@ Options:
 ```
 -M  add mongo
 -H  add HTTP
+-U  Update existing project with new template
 ```
 
 ## Extras
