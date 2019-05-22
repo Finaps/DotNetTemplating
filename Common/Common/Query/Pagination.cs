@@ -6,7 +6,7 @@ namespace MicroService.Common.Query
   {
     [Range(0, int.MaxValue)]
     public int Offset { get; set; }
-    [Range(0, 100)]
+    [Range(0, int.MaxValue)]
     public int Limit { get; set; } = 10;
   }
 
