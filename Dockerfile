@@ -4,9 +4,9 @@ EXPOSE 80
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
-COPY ["MicroService.csproj", "."]
+COPY ["MicroService/MicroService.csproj", "."]
 RUN dotnet restore "MicroService.csproj"
-COPY . .
+COPY MicroService .
 RUN dotnet build "MicroService.csproj" -c Release -o /app
 
 FROM build AS publish

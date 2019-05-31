@@ -4,7 +4,7 @@
   "identity": "Finaps.MicroServicesTemplate.CSharp",
   "name": "Finaps Microservice Framework",
   "shortName": "finapsms",
-  "sourceName": "MicroService",
+  "sourceName": "MicroService", //All instances of this term will be replaced by the -n option
   "preferNameDirectory": "true",
   "symbols": {
     "Mongo": {
