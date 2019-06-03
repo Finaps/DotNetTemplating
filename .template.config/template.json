@@ -27,21 +27,21 @@
     "modifiers": [{
         "condition": "(!Mongo)",
         "exclude": [
-          "Common/Mongo"
+          "MicroService/Common/Mongo"
         ]
       },
       {
         "condition": "(!Http)",
-        "exclude": ["Common/HTTP"]
+        "exclude": ["MicroService/Common/HTTP"]
       },
       {
         "condition": "(Update)",
         "exclude": [
-          "Startup.cs",
-          "appsettings.json",
-          "appsettings.Development.json",
-          "README.md",
-          "Controllers/HomeController.cs"
+          "MicroService/Startup.cs",
+          "MicroService/appsettings.json",
+          "MicroService/appsettings.Development.json",
+          "MicroService/README.md",
+          "MicroService/Controllers/HomeController.cs"
         ]
       },
       {
