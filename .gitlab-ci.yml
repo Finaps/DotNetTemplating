@@ -5,50 +5,133 @@ services:
 
 variables:
   DOCKER_DRIVER: overlay2
-  REGISTRY_URL: registry.finaps.nl
-  DOCKER_IMAGE: ${REGISTRY_URL}/${CI_PROJECT_PATH}
-  CHART_PATH: charts/MicroService/
-
-before_script:
-  - docker login -u ${GITLAB_REGISTRY_USER} -p ${GITLAB_REGISTRY_PASS} ${REGISTRY_URL}
+  DOCKER_IMAGE: ${REGISTRY_HOST}/${CI_PROJECT_NAME}
 
 stages:
+  - build
+  - test
   - release
   - deploy
 
-release_staging:
-  stage: release
+.build:
+  stage: build
   script:
-    - docker build --tag release .
-    - docker tag release ${DOCKER_IMAGE}:latest
-    - docker push ${DOCKER_IMAGE}:latest
-  only:
-    - develop
+    - mkdir image
+    - export IMAGE_TAG=${CI_ENVIRONMENT_SLUG}-${CI_COMMIT_SHORT_SHA}
+    - export COMMIT_IMAGE=${DOCKER_IMAGE}:${IMAGE_TAG}
+    - echo ${IMAGE_TAG} > image/tag.txt
+    - echo ${DOCKER_IMAGE} > image/repo.txt
+    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD $REGISTRY_HOST
+    - docker build -t ${COMMIT_IMAGE} -f ${DOCKERFILE} .
+    - docker push ${COMMIT_IMAGE}
+    - docker logout ${REGISTRY_HOST}
+  artifacts:
+    paths:
+      - image/
 
-release_latest:
-  stage: release
-  script:
-    - docker build --tag release .
-    - docker tag release ${DOCKER_IMAGE}:stable
-    - docker push ${DOCKER_IMAGE}:stable
-  only:
-    - master
-
-deploy_staging:
+.deploy:
+  image: lwolf/helm-kubectl-docker:v1.13.6-v2.13.1
   stage: deploy
-  image: lwolf/helm-kubectl-docker:latest
   before_script:
     - mkdir -p $HOME/.kube
     - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
-    - kubectl config use-context debtco-staging
-    - helm init --client-only
+    - kubectl config use-context ${KUBE_CONTEXT}
+    - helm init --client-only --service-account tiller --history-max 10
     - helm repo add stable https://kubernetes-charts.storage.googleapis.com/
     - helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
     - helm repo update
+    - export PROJECT_NAME="$( echo ${PWD##*/}| sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)"
+    - export CHART_PATH=charts/${PROJECT_NAME}/
+    - export IMAGE_REPOSITORY=$(cat image/repo.txt)
+    - export IMAGE_TAG=$(cat image/tag.txt)
+    - export RELEASE_NAME=${PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}
+
+.release:
+  stage: release
   script:
-    - export API_VERSION="$(grep "appVersion" ${CHART_PATH}Chart.yaml | cut -d" " -f2)"
-    - export RELEASE_NAME="$(grep "fullnameOverride" ${CHART_PATH}values.yaml | cut -d" " -f2)"
-    - export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
-    - if [ ${DEPLOYS}  -eq 0 ]; then helm install --name=${RELEASE_NAME} ${CHART_PATH} ; else helm upgrade ${RELEASE_NAME} ${CHART_PATH} --force --recreate-pods; fi
+    - export REPOSITORY=$(cat image/repo.txt)
+    - export TAG=$(cat image/tag.txt)
+    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD $REGISTRY_HOST
+    - docker pull ${REPOSITORY}:${TAG}
+    - docker tag ${REPOSITORY}:${TAG} ${REPOSITORY}:${CI_ENVIRONMENT_SLUG}
+    - docker push ${REPOSITORY}:${CI_ENVIRONMENT_SLUG}
+    - docker logout ${REGISTRY_HOST}
+    - echo ${CI_ENVIRONMENT_SLUG} > image/tag.txt
+  artifacts:
+    paths:
+      - image/
+
+build:
+  extends: .build
+  environment:
+    name: test
+  before_script:
+    - export DOCKERFILE=${CI_PROJECT_DIR}/Dockerfile
+
+build_dev:
+  extends: .build
+  before_script:
+    - export DOCKERFILE=${CI_PROJECT_DIR}/Dockerfile.develop
+  environment:
+    name: development
   only:
-    - develop
+    refs:
+      - develop
+
+release_dev:
+  extends: .release
+  environment:
+    name: development
+  dependencies:
+    - build_dev
+  only:
+    refs:
+      - develop
+
+release_staging:
+  extends: .release
+  environment:
+    name: staging
+  dependencies:
+    - build
+  only:
+    refs:
+      - develop
+
+release_production:
+  extends: .release
+  environment:
+    name: production
+  only:
+    refs:
+      - master
+
+deploy_dev:
+  extends: .deploy
+  environment:
+    name: development
+  variables:
+    NAMESPACE: development
+  script:
+    - export AZDS_VALUES=image.repository=${IMAGE_REPOSITORY},image.tag=${IMAGE_TAG},ingress.hosts[0]=dev.${PROJECT_NAME}.${DEV_SPACES_HOST_SUFFIX},ingress.annotations."kubernetes\.io/ingress\.class"=traefik-azds
+    - helm upgrade ${RELEASE_NAME} ${CHART_PATH} --namespace ${NAMESPACE} --force --recreate-pods --wait --install --set ${AZDS_VALUES}
+  dependencies:
+    - release_dev
+  only:
+    refs:
+      - develop
+
+deploy_test:
+  extends: .deploy
+  environment:
+    name: test
+  variables:
+    NAMESPACE: test
+  script:
+    - export VALUES=image.repository=${IMAGE_REPOSITORY},image.tag=${IMAGE_TAG}
+    - helm upgrade ${RELEASE_NAME} ${CHART_PATH} --namespace ${NAMESPACE} --force --recreate-pods --wait --install --set ${VALUES}
+  dependencies:
+    - release_staging
+  only:
+    refs:
+      - develop

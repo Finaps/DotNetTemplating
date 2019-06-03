@@ -58,3 +58,7 @@ A service will need a database (maybe). To facilitate this we recommend using He
 ```shell
 helm install -n <servicename>-database(-dev) stable/mongodb -f charts/<servicename>-database/values.yaml (--namespace=<development-namepsace>)
 ```
+
+### CI/CD
+
+The service is designed to work in a Kubernetes context. To enable this, uncomment the deploy and release stages from the `.gitlab-ci.yml`.file. Make sure that on the Gitlab project/group level the correct variables are set. (Review `.gitlab-ci.yml` for a list of variables)
