@@ -10,56 +10,11 @@ variables:
 stages:
   - build
   - test
-  - release
-  - deploy
 
 .build:
   stage: build
   script:
-    - mkdir image
-    - export IMAGE_TAG=${CI_ENVIRONMENT_SLUG}-${CI_COMMIT_SHORT_SHA}
-    - export COMMIT_IMAGE=${DOCKER_IMAGE}:${IMAGE_TAG}
-    - echo ${IMAGE_TAG} > image/tag.txt
-    - echo ${DOCKER_IMAGE} > image/repo.txt
-    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD $REGISTRY_HOST
-    - docker build -t ${COMMIT_IMAGE} -f ${DOCKERFILE} .
-    - docker push ${COMMIT_IMAGE}
-    - docker logout ${REGISTRY_HOST}
-  artifacts:
-    paths:
-      - image/
-
-.deploy:
-  image: lwolf/helm-kubectl-docker:v1.13.6-v2.13.1
-  stage: deploy
-  before_script:
-    - mkdir -p $HOME/.kube
-    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
-    - kubectl config use-context ${KUBE_CONTEXT}
-    - helm init --client-only --service-account tiller --history-max 10
-    - helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-    - helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
-    - helm repo update
-    - export PROJECT_NAME="$( echo ${PWD##*/}| sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)"
-    - export CHART_PATH=charts/${PROJECT_NAME}/
-    - export IMAGE_REPOSITORY=$(cat image/repo.txt)
-    - export IMAGE_TAG=$(cat image/tag.txt)
-    - export RELEASE_NAME=${PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}
-
-.release:
-  stage: release
-  script:
-    - export REPOSITORY=$(cat image/repo.txt)
-    - export TAG=$(cat image/tag.txt)
-    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD $REGISTRY_HOST
-    - docker pull ${REPOSITORY}:${TAG}
-    - docker tag ${REPOSITORY}:${TAG} ${REPOSITORY}:${CI_ENVIRONMENT_SLUG}
-    - docker push ${REPOSITORY}:${CI_ENVIRONMENT_SLUG}
-    - docker logout ${REGISTRY_HOST}
-    - echo ${CI_ENVIRONMENT_SLUG} > image/tag.txt
-  artifacts:
-    paths:
-      - image/
+    - docker build -f ${DOCKERFILE} .
 
 build:
   extends: .build
@@ -78,60 +33,8 @@ build_dev:
     refs:
       - develop
 
-release_dev:
-  extends: .release
-  environment:
-    name: development
-  dependencies:
-    - build_dev
-  only:
-    refs:
-      - develop
-
-release_staging:
-  extends: .release
-  environment:
-    name: staging
-  dependencies:
-    - build
-  only:
-    refs:
-      - develop
-
-release_production:
-  extends: .release
-  environment:
-    name: production
-  only:
-    refs:
-      - master
-
-deploy_dev:
-  extends: .deploy
-  environment:
-    name: development
-  variables:
-    NAMESPACE: development
+test:
+  stage: test
   script:
-    - export AZDS_VALUES=image.repository=${IMAGE_REPOSITORY},image.tag=${IMAGE_TAG},ingress.hosts[0]=dev.${PROJECT_NAME}.${DEV_SPACES_HOST_SUFFIX},ingress.annotations."kubernetes\.io/ingress\.class"=traefik-azds
-    - helm upgrade ${RELEASE_NAME} ${CHART_PATH} --namespace ${NAMESPACE} --force --recreate-pods --wait --install --set ${AZDS_VALUES}
-  dependencies:
-    - release_dev
-  only:
-    refs:
-      - develop
+    - docker build -f Dockerfile.test .
 
-deploy_test:
-  extends: .deploy
-  environment:
-    name: test
-  variables:
-    NAMESPACE: test
-  script:
-    - export VALUES=image.repository=${IMAGE_REPOSITORY},image.tag=${IMAGE_TAG}
-    - helm upgrade ${RELEASE_NAME} ${CHART_PATH} --namespace ${NAMESPACE} --force --recreate-pods --wait --install --set ${VALUES}
-  dependencies:
-    - release_staging
-  only:
-    refs:
-      - develop
