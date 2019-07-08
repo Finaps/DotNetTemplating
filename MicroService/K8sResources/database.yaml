@@ -1,0 +1,10 @@
+# This is a template for adding environment variables to kubernetes
+# Use this to setup the connection string for a service
+
+apiVersion: v1
+data:
+  connectionstring: {connectionstring_as_base64}
+  database: {databasename_as_base64}
+kind: Secret
+metadata:
+  name: {name of project}

@@ -53,8 +53,4 @@ One of the benefits of using `azds` is that we get free helm resources. Helm is 
 
 ### MongoDB
 
-A service will need a database (maybe). To facilitate this we recommend using Helm with a stable repo channel to manage database and their setup. When you prepare your repo with `azds` you will get a charts folder. We recommend to add a second folder to the charts folder which will hold the `values.yaml` file for setup. To setup a mongodb instance we run the following command:
-
-```shell
-helm install -n <servicename>-database(-dev) stable/mongodb -f charts/<servicename>-database/values.yaml (--namespace=<development-namepsace>)
-```
+A service will need a database (maybe). To create a database for a new service run the commands lined out in the debtco teams channel wiki. Also copy the snippets from the K8sResources/charts.yaml file into the correct charts.

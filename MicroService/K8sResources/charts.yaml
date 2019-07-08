@@ -1,0 +1,20 @@
+# Place the following snippet in the values.yaml file
+# Somewhere at the top level
+environment:
+  CONNECTIONSTRING:
+    secretName: clientstore
+    secretKey: connectionstring
+  DATABASE_NAME:
+    secretName: clientstore
+    secretKey: database
+
+
+# Add the following snippet to the deployment.yaml file
+# place it at the end of the 'env:' directive
+{{- range $ref, $value := .Values.environment }}
+  - name: {{ $ref }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ $value.secretName }}
+        key: {{ $value.secretKey }}
+  {{- end }}
