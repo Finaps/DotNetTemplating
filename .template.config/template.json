@@ -1,7 +1,7 @@
 {
   "$schema": "http://json.schemastore.org/template",
   "author": "Finaps",
-  "identity": "Finaps.MicroServicesTemplate.CSharp",
+  "identity": "Finaps.Service.CSharp",
   "name": "Finaps Microservice Project",
   "shortName": "apiservice",
   "sourceName": "MicroService",
