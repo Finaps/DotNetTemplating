@@ -10,29 +10,7 @@
     "language": "C#",
     "type": "project"
   },
-  "PrimaryOutputs": [
-    {
-      "path": "MicroService\\MicroService.API\\charts\\ChartNameapi\\Chart.yaml"
-    }
-  ],
-  "symbols": {
-    "name": {
-      "type": "parameter",
-      "datatype": "text",
-      "replaces": "MicroService",
-      "defaultValue": "MicroService"
-    },
-    "nameLower": {
-      "type": "generated",
-      "generator": "casing",
-      "parameters": {
-        "source": "name",
-        "toLower": true
-      },
-      "replaces": "ChartName",
-      "fileRename": "ChartName"
-    }
-  },
+  "symbols": {},
   "sources": [
     {
       "modifiers": [
