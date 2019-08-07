@@ -2,13 +2,37 @@
   "$schema": "http://json.schemastore.org/template",
   "author": "Finaps",
   "identity": "Finaps.MicroServicesTemplate.CSharp",
-  "name": "Finaps Microservice Framework",
-  "shortName": "finapsms",
+  "name": "Finaps Microservice Project",
+  "shortName": "apiservice",
   "sourceName": "MicroService",
+  "classifications": ["Container", "API Service"],
   "tags": {
-    "language": "C#"
+    "language": "C#",
+    "type": "project"
   },
-  "symbols": {},
+  "PrimaryOutputs": [
+    {
+      "path": "MicroService\\MicroService.API\\charts\\ChartNameapi\\Chart.yaml"
+    }
+  ],
+  "symbols": {
+    "name": {
+      "type": "parameter",
+      "datatype": "text",
+      "replaces": "MicroService",
+      "defaultValue": "MicroService"
+    },
+    "nameLower": {
+      "type": "generated",
+      "generator": "casing",
+      "parameters": {
+        "source": "name",
+        "toLower": true
+      },
+      "replaces": "ChartName",
+      "fileRename": "ChartName"
+    }
+  },
   "sources": [
     {
       "modifiers": [
@@ -24,6 +48,16 @@
           ]
         }
       ]
+    }
+  ],
+  "SpecialCustomOperations": {},
+  "postActions": [
+    {
+      "condition": "(!skipRestore)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [{ "text": "Run 'dotnet restore'" }],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
     }
   ]
 }
