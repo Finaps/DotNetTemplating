@@ -4,57 +4,26 @@
   "identity": "Finaps.MicroServicesTemplate.CSharp",
   "name": "Finaps Microservice Framework",
   "shortName": "finapsms",
-  "sourceName": "MicroService", //All instances of this term will be replaced by the -n option
-  "preferNameDirectory": "true",
-  "symbols": {
-    "Mongo": {
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "false"
-    },
-    "Http": {
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "false"
-    },
-    "Update": {
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "false"
-    }
+  "sourceName": "MicroService",
+  "tags": {
+    "language": "C#"
   },
-  "sources": [{
-    "modifiers": [{
-        "condition": "(!Mongo)",
-        "exclude": [
-          "MicroService/Common/Mongo"
-        ]
-      },
-      {
-        "condition": "(!Http)",
-        "exclude": ["MicroService/Common/HTTP"]
-      },
-      {
-        "condition": "(Update)",
-        "exclude": [
-          "MicroService/Startup.cs",
-          "MicroService/appsettings.json",
-          "MicroService/appsettings.Development.json",
-          "MicroService/README.md",
-          "MicroService/Controllers/HomeController.cs"
-        ]
-      },
-      {
-        "exclude": [
-          "**/[Bb]in/**",
-          "**/[Oo]bj/**",
-          ".template.config/**/*",
-          "**/*.filelist",
-          "**/*.user",
-          "**/*.lock.json",
-          ".git/**"
-        ]
-      }
-    ]
-  }]
+  "symbols": {},
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": [
+            "**/[Bb]in/**",
+            "**/[Oo]bj/**",
+            ".template.config/**/*",
+            "**/*.filelist",
+            "**/*.user",
+            "**/*.lock.json",
+            ".git/**"
+          ]
+        }
+      ]
+    }
+  ]
 }
