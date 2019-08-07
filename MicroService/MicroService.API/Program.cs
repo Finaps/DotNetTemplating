@@ -36,16 +36,6 @@ namespace MicroService
         Log.CloseAndFlush();
       }
     }
-
-    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-        WebHost.CreateDefaultBuilder(args)
-            .UseStartup<Startup>()
-            .ConfigureLogging((hostingContext, logging) =>
-        {
-          logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-          logging.ClearProviders();
-          logging.AddConsole();
-        });
     private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
         WebHost.CreateDefaultBuilder(args)
             .CaptureStartupErrors(false)
@@ -76,7 +66,12 @@ namespace MicroService
           .SetBasePath(Directory.GetCurrentDirectory())
           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
           .AddEnvironmentVariables();
+      var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
+      if (environment == EnvironmentName.Development)
+      {
+        builder.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
+      }
       return builder.Build();
     }
   }
