@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "name": "MicroService",
+      "path": "."
+    },
+    {
+      "name": "MicroService API",
+      "path": "./MicroService.API"
+    },
+    {
+      "name": "Microservie UnitTests",
+      "path": "./MicroService.UnitTests"
+    }
+  ]
+}

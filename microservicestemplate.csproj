@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageType>Template</PackageType>
     <PackageVersion>0.1</PackageVersion>
-    <PackageId>Finaps.Microservice.Templates</PackageId>
+    <PackageId>Finaps.Templates.ASP.MicroService</PackageId>
     <Title>Finaps ASP.NET API Microservice Template</Title>
     <Authors>Finaps B.V.</Authors>
     <Description>Templates to use when creating an API Microservice for A Finaps Project.</Description>
