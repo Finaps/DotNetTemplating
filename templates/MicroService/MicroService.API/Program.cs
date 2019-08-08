@@ -53,7 +53,9 @@ namespace MicroService
           .MinimumLevel.Verbose()
           .Enrich.WithProperty("ApplicationContext", AppName)
           .Enrich.FromLogContext()
-          .WriteTo.Console()
+          .WriteTo.Console(
+            outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:w}] {Message}{NewLine}{Exception}"
+          )
           .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
           .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl)
           .ReadFrom.Configuration(configuration)
