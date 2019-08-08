@@ -24,8 +24,8 @@ x86/
 build/
 bld/
 data/
-[Bb]in/
-[Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
 [Oo]ut/
 msbuild.log
 msbuild.err
