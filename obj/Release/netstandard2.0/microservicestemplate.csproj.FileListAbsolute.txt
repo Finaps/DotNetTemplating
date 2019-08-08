@@ -1,9 +1,0 @@
-/Users/andrewhagens/Developer/finaps/labs/microservicestemplate/bin/Release/netstandard2.0/microservicestemplate.deps.json
-/Users/andrewhagens/Developer/finaps/labs/microservicestemplate/bin/Release/netstandard2.0/microservicestemplate.dll
-/Users/andrewhagens/Developer/finaps/labs/microservicestemplate/bin/Release/netstandard2.0/microservicestemplate.pdb
-/Users/andrewhagens/Developer/finaps/labs/microservicestemplate/obj/Release/netstandard2.0/microservicestemplate.csprojAssemblyReference.cache
-/Users/andrewhagens/Developer/finaps/labs/microservicestemplate/obj/Release/netstandard2.0/microservicestemplate.csproj.CoreCompileInputs.cache
-/Users/andrewhagens/Developer/finaps/labs/microservicestemplate/obj/Release/netstandard2.0/microservicestemplate.AssemblyInfoInputs.cache
-/Users/andrewhagens/Developer/finaps/labs/microservicestemplate/obj/Release/netstandard2.0/microservicestemplate.AssemblyInfo.cs
-/Users/andrewhagens/Developer/finaps/labs/microservicestemplate/obj/Release/netstandard2.0/microservicestemplate.dll
-/Users/andrewhagens/Developer/finaps/labs/microservicestemplate/obj/Release/netstandard2.0/microservicestemplate.pdb

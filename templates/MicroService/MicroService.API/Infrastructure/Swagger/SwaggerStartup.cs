@@ -19,10 +19,10 @@ namespace MicroService.Infrastructure.Swagger
           {
             Name = "GitHub Repo",
             Email = "",
-            Url = "https://github.com/archre2/ProgramRepository",
+            Url = "",
           }
         });
-        var filePath = Path.Combine(System.AppContext.BaseDirectory, "ProgramRepository.API.xml");
+        var filePath = Path.Combine(System.AppContext.BaseDirectory, "MicroService.API.xml");
         c.IncludeXmlComments(filePath);
         c.DescribeAllEnumsAsStrings();
       });
