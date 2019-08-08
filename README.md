@@ -9,8 +9,7 @@
 To install the template localy:
 
 ```sh
-$ cd <path/to/folder>
-$ dotnet new -i .
+$ dotnet new -i Finaps.Templates.ASP.MicroService
 ```
 
 # Usage
