@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using HealthChecks.UI.Client;
 using MicroService.Common.Mongo;
-using MicroService.Common.Rabbit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -49,9 +48,7 @@ namespace MicroService
           return builtInFactory(context);
         };
       });
-      services.Configure<RabbitOptions>(Configuration.GetSection("Rabbit"));
       services.AddSingleton<IConfiguration>(Configuration);
-      services.AddRabbitMQ(Configuration);
       services.ConfigureDatabase(Configuration);
       services.ConfigureResolvers(Configuration);
       services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
@@ -66,7 +63,6 @@ namespace MicroService
       {
         app.UseHsts();
       }
-      app.ApplicationServices.GetService<RabbitManager>();
       app.UseHealthChecks("/hc", new HealthCheckOptions()
       {
         Predicate = _ => true,
