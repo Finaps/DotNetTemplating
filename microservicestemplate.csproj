@@ -1,11 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- edit this value to change the current MAJOR.MINOR version -->
+    <VersionPrefix>0.1</VersionPrefix>
+  </PropertyGroup>
+  <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageVersion>0.1</PackageVersion>
     <PackageId>Finaps.Templates.ASP.MicroService</PackageId>
     <Title>Finaps ASP.NET API Microservice Template</Title>
     <Authors>Finaps B.V.</Authors>
+    <VersionPrefix>$(VersionPrefix).$(BUILD_BUILDID.PadLeft(1, '0'))</VersionPrefix>
     <Description>Templates to use when creating an API Microservice for A Finaps Project.</Description>
     <PackageTags>dotnet-new;templates;finaps</PackageTags>
     <TargetFramework>netstandard2.0</TargetFramework>
