@@ -374,5 +374,4 @@ MigrationBackup/
 # Ignore all local history of files
 .history
 
-# End of https://www.gitignore.io/api/dotnetcore,visualstudiocode,csharp
-n
+# End of https://www.gitignore.io/api/dotnetcore,visualstudiocode,csharpcleanup gitignore
