@@ -9,7 +9,7 @@
 To install the template localy:
 
 ```sh
-$ dotnet new -i Finaps.Templates.AspNetCore
+$ dotnet new -i Finaps.Templates.ASP.MicroService
 ```
 
 # Usage
