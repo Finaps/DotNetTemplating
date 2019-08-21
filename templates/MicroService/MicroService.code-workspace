@@ -9,7 +9,7 @@
       "path": "./MicroService.API"
     },
     {
-      "name": "Microservie UnitTests",
+      "name": "MicroService UnitTests",
       "path": "./MicroService.UnitTests"
     }
   ]
