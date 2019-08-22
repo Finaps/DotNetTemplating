@@ -6,7 +6,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageId>Finaps.Templates.ASP.MicroService</PackageId>
+    <PackageId>Finaps.Templates.AspNetCore</PackageId>
     <Title>Finaps ASP.NET API Microservice Template</Title>
     <Authors>Finaps B.V.</Authors>
     <VersionPrefix>$(VersionPrefix).$(BUILD_BUILDID.PadLeft(1, '0'))</VersionPrefix>

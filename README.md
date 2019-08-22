@@ -1,4 +1,4 @@
-# ASP.NET API Microservice Template
+# ASP.NET API Templates
 
 # Prerequisites 
 .NET Core command-line (CLI) tools
@@ -9,15 +9,17 @@
 To install the template localy:
 
 ```sh
-$ cd <path/to/folder>
-$ dotnet new -i .
+$ dotnet new -i Finaps.Templates.AspNetCore
 ```
 
 # Usage
 
 ```sh
-$ dotnet new apiservice -n <ProjectName> [OPTIONS]
+$ dotnet new <short-name> -n <ProjectName> [OPTIONS]
 ```
+
+## Templates included: 
+  - **apiservice**: Microservice template designed for containerized services 
 
 ## Azure Developer Spaces
 
