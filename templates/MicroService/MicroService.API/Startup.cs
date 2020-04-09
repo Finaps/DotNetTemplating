@@ -1,19 +1,16 @@
-﻿using HealthChecks.UI.Client;
-using MicroService.Infrastructure.ErrorHandling;
+﻿using MicroService.Infrastructure.ErrorHandling;
 using MicroService.Infrastructure.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.Extensions.Hosting;
 
 namespace MicroService
 {
-
   public class Startup
   {
     private readonly ILogger<Startup> _logger;
@@ -30,23 +27,14 @@ namespace MicroService
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
       services.ConfigureErrorHandling();
       services.ConfigureSwagger();
       services.AddSingleton<IConfiguration>(Configuration);
       services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
-    }
-    public void ConfigureDevelopmentServices(IServiceCollection services)
-    {
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-      services.ConfigureErrorHandling();
-      services.ConfigureSwagger();
-      services.AddSingleton<IConfiguration>(Configuration);
-      services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
+      services.AddControllers();
     }
 
-
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
       if (env.IsDevelopment())
       {
@@ -59,8 +47,7 @@ namespace MicroService
 
       app.UseHealthChecks("/hc", new HealthCheckOptions()
       {
-        Predicate = _ => true,
-        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        Predicate = _ => true
       });
 
       app.UseHealthChecks("/liveness", new HealthCheckOptions
@@ -77,8 +64,10 @@ namespace MicroService
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
       });
 
-      app.UseMvc();
+      app.UseRouting();
+      app.UseEndpoints(endpoints => {
+        endpoints.MapControllers();
+      });
     }
   }
-
 }

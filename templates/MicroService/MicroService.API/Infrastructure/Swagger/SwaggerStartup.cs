@@ -1,6 +1,6 @@
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace MicroService.Infrastructure.Swagger
 {
@@ -10,21 +10,19 @@ namespace MicroService.Infrastructure.Swagger
     {
       return services.AddSwaggerGen(c =>
       {
-        c.SwaggerDoc("v1", new Info
+        c.SwaggerDoc("v1", new OpenApiInfo
         {
           Title = "API",
           Version = "v1",
           Description = "Service",
-          Contact = new Contact
+          Contact = new OpenApiContact
           {
             Name = "GitHub Repo",
-            Email = "",
-            Url = "",
+            Email = ""
           }
         });
         var filePath = Path.Combine(System.AppContext.BaseDirectory, "MicroService.API.xml");
         c.IncludeXmlComments(filePath);
-        c.DescribeAllEnumsAsStrings();
       });
     }
   }

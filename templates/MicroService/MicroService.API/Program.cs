@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace MicroService
@@ -69,7 +70,7 @@ namespace MicroService
           .AddEnvironmentVariables();
       var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-      if (environment == EnvironmentName.Development)
+      if (environment == Environments.Development)
       {
         builder.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
       }
