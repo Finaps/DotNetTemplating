@@ -31,7 +31,7 @@ namespace MicroService
       services.ConfigureSwagger();
       services.AddSingleton<IConfiguration>(Configuration);
       services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
-      services.AddControllers();
+      services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
